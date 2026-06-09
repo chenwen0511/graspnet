@@ -1,0 +1,6 @@
+graspnet-baseline/
+__pycache__/
+checkpoint-rs.tar
+*.pyc
+
+graspnetAPI/
