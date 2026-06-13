@@ -7,7 +7,7 @@
 ```bash
 conda activate sam3
 cd graspnet-baseline
-bash command_demo.sh
+bash command_demo_custom.sh  
 # 等价于：
 # CUDA_VISIBLE_DEVICES=0 python demo.py --checkpoint_path /path/to/checkpoint-rs.tar
 ```
@@ -76,6 +76,28 @@ def get_net():
   - `num_view=300`：每个 seed 点候选的接近方向数
   - `num_angle=12`：夹爪在平面内旋转的离散类别数（每类间隔 π/12）
   - `num_depth=4`：夹爪插入深度的离散类别数（对应 1~4 cm）
+
+### 模型规模与权重文件
+
+以本仓库使用的 `checkpoint-rs.tar`（RealSense 预训练，epoch 18）为例：
+
+| 项目 | 数值 |
+|------|------|
+| **模型参数量** | 约 **103 万（1.03M）** |
+| 权重张量数 | 162 个 |
+| 仅权重体积（FP32） | 约 **3.9 MB** |
+
+| 文件 | 磁盘大小 | 内容 |
+|------|----------|------|
+| **`checkpoint-rs.tar`** | **约 12 MB** | 完整训练 checkpoint（tar 包） |
+| └ `model_state_dict` | 约 3.9 MB | 模型权重（**推理只需这部分**） |
+| └ `optimizer_state_dict` | 约 7.8 MB | Adam 优化器状态（推理不需要） |
+
+说明：
+
+- 结构为 PointNet++ backbone + 两阶段抓取头，属于 **百万参数级** 轻量模型。
+- 磁盘 12 MB 主要是因为打包了 **optimizer**；若部署时只导出 `model_state_dict`，文件约 **4 MB**。
+- 官方另有 `checkpoint-kn.tar`（Kinect 相机训练），网络结构相同，参数量与文件大小应接近。
 
 ---
 
