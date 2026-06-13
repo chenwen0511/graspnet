@@ -1,4 +1,6 @@
 graspnet-baseline/
+graspnet-baseline/output/*
+!graspnet-baseline/output/.gitkeep
 __pycache__/
 checkpoint-rs.tar
 *.pyc
